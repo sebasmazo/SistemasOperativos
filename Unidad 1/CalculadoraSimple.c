@@ -11,7 +11,7 @@ int main(void){
         printf("Ingrese el operando 2 \n");
         scanf("%lf", &operando2);
 
-        //SOLUCIONAR ERROR
+        
         printf("Ingrese la operacion que desea hacer (+,-,*), q si desea salir del programa\n");
         scanf("%s", &operacion);
 
