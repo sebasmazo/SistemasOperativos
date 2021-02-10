@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
-int main(){
+int main(void){
 
     printf("Hola mundo");
     int var1 = 11;
