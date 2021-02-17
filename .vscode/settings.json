@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "stdio.h": "c"
-    }
+        "stdio.h": "c",
+        "PRUEBA.C": "cpp"
+    },
+    "C_Cpp.default.compilerPath": "/home/mazo/.vscode-server/extensions/bartmanabyss.amiga-debug-1.0.0\\bin\\opt\\bin\\m68k-amiga-elf-gcc.exe"
 }
