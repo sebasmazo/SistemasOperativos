@@ -113,7 +113,7 @@ void loaddb(FILE *in_file){
         strcpy(pbd -> registro[i].nombre,people);
         pbd->registro[i].semestre = sem;
     }
-    printf("Se cargo satisfactoriamente la base de datos: %s\n", pbd->nombre);
+    printf("Se cargo satisfactoriamente la base de datos \n");
 }
 void savedb(FILE *On_File){
     fprintf(On_File, "%s %d %d\n", pbd->nombre,pbd->nroreg,pbd->size);
