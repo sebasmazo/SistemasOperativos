@@ -39,8 +39,8 @@ void LiberarMemoria(){
 }
 ListaBaseDeDatos * ListaCtor(){
     ListaBaseDeDatos *lista1 = malloc(sizeof(ListaBaseDeDatos));
-    lista1->bdaux = (DataBase*) malloc(sizeof(DataBase)*30);
-    lista1->bdactual = malloc(sizeof(DataBase));
+    lista1->bdactual = (DataBase*) malloc(sizeof(DataBase)*30);
+    lista1->bdaux = malloc(sizeof(DataBase));
     lista1 -> size = 0;
     lista1->valiterator = 0;
     return lista1;
@@ -54,7 +54,8 @@ int main(void)  //REHACER
     int aux3;
     do
     {
-        printf("Ingrese el comando:\n");
+        FuncDisponibles();
+        printf("Ingrese funcion a usar\n");
         scanf("%s", comando);
 
         if (strcmp(comando, "mdb") == 0)
@@ -130,18 +131,21 @@ void FuncDisponibles()
 void mdb(char nombredb[40],int size){
     for (int i = 0; i < listaprincipal->size; i++)
     {
-        if(strcmp(listaprincipal->bdactual[i].nombre,nombredb) == 0){
-            printf("BD ya existente");
+        if (strcmp(listaprincipal->bdactual[i].nombre, nombredb) == 0)
+        {
+            printf("Esta BD ya existe\n");
             return;
         }
     }
-    strcpy(listaprincipal ->bdactual[listaprincipal->size].nombre,nombredb);
-    listaprincipal ->bdactual[listaprincipal->size].nroreg = size;
-    listaprincipal ->bdactual[listaprincipal->size].reg = (estudiante *)malloc(sizeof(estudiante)*size);
-    listaprincipal ->bdactual[listaprincipal->size].size=0;
-    listaprincipal ->size = listaprincipal -> size+1;
-    printf("DataBase creada exitosamente \n");
+
+    strcpy(listaprincipal->bdactual[listaprincipal->size].nombre, nombredb);
+    listaprincipal->bdactual[listaprincipal->size].nroreg = size;
+    listaprincipal->bdactual[listaprincipal->size].reg = (estudiante *)malloc(sizeof(estudiante) * size);
+    listaprincipal->bdactual[listaprincipal->size].size = 0;
+    listaprincipal->size = listaprincipal->size + 1;
+    printf("Se creo con exito la BD %s\n", listaprincipal->bdactual[listaprincipal->size].nombre);
 }
+
 void ldb(FILE *in_file){
     char nombre[30], nombreestudiante[30];
     int cedula,semestre,size,sizedblist;
@@ -173,15 +177,20 @@ void lsdbs(){
     }
 }
 void sdb(char name[30]){
+    
     for (int i = 0; i < listaprincipal->size; i++)
     {
-        if(strcmp(listaprincipal->bdactual[i].nombre,name)==0){
-            listaprincipal->bdaux = listaprincipal->bdactual +i;
-            listaprincipal->valiterator=1;
+        if (strcmp(listaprincipal->bdactual[i].nombre, name) == 0)
+        {
+            printf("Se encontro la BD %s\n", name);
+            listaprincipal->bdaux = listaprincipal->bdactual + i;
+            listaprincipal->valiterator = 1;
+            break;
         }
     }
-    if(listaprincipal->valiterator!=1){
-        printf("DataBase no existente \n");
+    if (listaprincipal->valiterator == 0)
+    {
+        printf("Esta BD no existe\n");
     }
 }
 void gdb(){
@@ -191,14 +200,15 @@ void gdb(){
     }
     printf("DataBase activa; Nombre: %s, Tamaño: %d, Reg disponibles: %d \n", listaprincipal->bdaux->nombre, listaprincipal->bdaux->nroreg,(listaprincipal->bdaux->nroreg - listaprincipal->bdactual->size));
 }
-void svdb(){    //Error
-    if(listaprincipal->valiterator != 1){
+void svdb()
+{ 
+    if(listaprincipal->valiterator == 0){
         printf("Primero seleccione una database\n");
         return;
     }
     char output_name[30];
     strcpy(output_name,listaprincipal->bdaux->nombre);
-    FILE *on_file = fopen(strcat(output_name,".txt"),"w+");
+    FILE *on_file = fopen(strcat(output_name, ".txt"),"w+");
     if(on_file == NULL){
         printf("Error al abrir archivo %s\n",output_name);
         return;
@@ -209,7 +219,7 @@ void svdb(){    //Error
         fprintf(on_file, "%d %s %d\n", listaprincipal->bdaux->reg[i].Cedula, listaprincipal->bdaux->reg[i].Nombre, listaprincipal->bdaux->reg[i].Semestre);
         printf("DataBase guardada exitosamente \n");
     }
-    
+    fflush(on_file);
 }
 void radb(){
     if (listaprincipal->valiterator != 1)
@@ -267,5 +277,4 @@ void rr(int paramCedula){
         }
     }
     printf("Registro no encontrado");
-    
 }

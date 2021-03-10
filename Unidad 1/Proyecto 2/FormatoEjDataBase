@@ -1,74 +1,8 @@
-Nombre NroRegistros Size
-Cedula NombreEstudiante Semestre
+Estudiante 7 7
+10291292 Jorgito 5
+1921929 Andres 3
+129192 Miguel 2
 
 
 
 
-
-    //////////////////////////////////////////////////////////////
-    listaprincipal = ListaCtor();
-    FuncDisponibles();
-    do{
-        printf("Ingrese el comando que desea\n");
-        scanf("%s \n",comando);
-        if(strcmp(comando,"mdb") == 0){
-            fscanf(stdin, "%s %d \n", aux1, &aux2);
-            mdb(aux1,aux2);
-        }else if (strcmp(comando,"ldb"))
-        {   
-
-            fscanf(stdin, "%s", aux1);
-            FILE *in_file = fopen(aux1, "r");
-            if (in_file == NULL)
-                printf("No se puede abrir %s\n", aux1);
-            else
-            {
-                ldb(in_file);
-                fclose(in_file);
-            }
-        }
-        else if (strcmp(comando, "lsdbs"))
-        {
-            lsdbs();
-        }
-        else if (strcmp(comando, "gdb"))
-        {
-            gdb();
-        }
-        else if (strcmp(comando, "sdb"))
-        {
-            fscanf(stdin, "%s", aux1);
-            sdb(aux1);
-        }
-        else if (strcmp(comando, "svdb"))
-        {
-            svdb();
-        }
-        else if (strcmp(comando, "radb"))
-        {
-            radb();
-        }
-        else if (strcmp(comando, "rsdb"))
-        {
-            rsdb();
-        }
-        else if (strcmp(comando, "mreg"))
-        {
-            fscanf(stdin, "%d %s %d", &aux2, aux1, &aux3);
-            mreg(aux2, aux1, aux3);
-        }
-        else if (strcmp(comando, "rr"))
-        {
-            fscanf(stdin, "%d", &aux2);
-            rr(aux2);
-        }
-        getc(stdin); 
-    }while(strcmp(comando,"exit") != 0);
-    if(listaprincipal->valiterator == 1){
-        printf("Antes de cerrar el programa, desea guardar la base de datos activa? (SI, para guardar)");
-        scanf("%s",comando);
-        if(strcmp(comando,"SI")==0){
-            svdb();
-        }
-    }
-    LiberarMemoria();
