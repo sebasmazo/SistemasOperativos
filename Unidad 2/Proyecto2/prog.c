@@ -5,118 +5,142 @@
 #include <unistd.h>
 #include <string.h>
 
-
-typedef struct{
+typedef struct dato
+{
     char nombre[20];
     char ocupacion[20];
     int edad;
-}dato;
-typedef struct 
+} dato;
+struct parametro
 {
+    dato *punterodato;
     int aux;
-    FILE *on_file;
-    dato *dato;
-}parametro;
-void quicksort();
-int particion();
-void InvertirOrden(void *parametros)
+    char salida[20];
+};
+void inverso(void *params)
 {
-    parametro *x = (parametro *)parametros;
-    for (int i = x->aux - 1; i >= 0; i--)
+    struct parametro *p = (struct parametro *)params;
+    dato auxlinea;
+    FILE *OUT_FILE;
+    for (int a = 0; a < (p[0].aux / 2); a++)
     {
-        fprintf(x->on_file, "%s %s %d \n", x->dato[i].nombre, x->dato[i].ocupacion, x->dato[i].edad);
+        auxlinea = p[0].punterodato[a];
+        p[0].punterodato[a] = p[0].punterodato[p[0].aux - 1 - a];
+        p[0].punterodato[p[0].aux - 1 - a] = auxlinea;
     }
-    fclose(x->on_file);
-    return NULL;
+
+    OUT_FILE = fopen(p[0].salida, "w");
+
+    for (int i = 0; i < p[0].aux; i++)
+    {
+        fprintf(OUT_FILE, "%s %s %d\n", p[0].punterodato[i].nombre, p[0].punterodato[i].ocupacion, p[0].punterodato[i].edad);
+    }
+    fclose(OUT_FILE);
 }
-
-
-int main(int argc, char const *argv[]) //HILO 1: ORDEN INVERSO, HILO 2: ORDEN ALFABETICO
+void orden(void *params)
 {
-    char nombre1[20],ocupacion1[20];
-    int aux=0, edad1;
-    pthread_t hilo1, hilo2;
-    parametro p1,p2;
-    FILE *in_file = fopen(argv[1],"r");
-    if (in_file == NULL)
+    struct parametro *x = (struct parametro *)params;
+    dato auxlinea;
+    FILE *OUT_FILE;
+
+    for (int a = 0; a < x[0].aux - 1; a++)
     {
-        printf("No se puede abrir %s\n", argv[1]);
-        exit(8);
-    }
-    while (fscanf(in_file,"%s %s %d", nombre1, ocupacion1, &edad1) == 3)
-    {
-        aux++;
-        if (edad1<0)
+        for (int b = a + 1; b < x[0].aux; b++)
         {
-            printf("Edad invalida \n");
-            return 0;
+            if (strcmp(x[0].punterodato[a].ocupacion, x[0].punterodato[b].ocupacion) > 0)
+            {
+                auxlinea = x[0].punterodato[a];
+                x[0].punterodato[a] = x[0].punterodato[b];
+                x[0].punterodato[b] = auxlinea;
+            }
         }
     }
-    if(aux>100){
-        printf("Nro de lineas invalido");
-        return 0;
-    }
-    rewind(in_file);
-    dato *pdato = (dato *)malloc(sizeof(dato) * aux);
-    FILE *on_file1 = fopen(argv[2], "r");
-    FILE *on_file2 = fopen(argv[3], "r");
-    for (int i = 0; i < aux; i++)
-    {
-        fscanf(in_file,"%s %s %d", nombre1,ocupacion1,&edad1);
-        strcpy(pdato[i].nombre,nombre1);
-        strcpy(pdato[i].ocupacion,ocupacion1);
-        pdato[i].edad = edad1;
-    }
-    printf("Estructura \n");
-    for (int i = 0; i < aux; i++)
-    {
-        printf("%s %s %d \n", pdato[i].nombre ,pdato[i].ocupacion, pdato[i].edad);
-    }
-    printf("\n");
-    p1.on_file = on_file1;
-    p1.aux = aux;
-    p1.dato = pdato;
+    OUT_FILE = fopen(x[0].salida, "w");
 
-    p2.on_file = on_file2;
-    p2.aux = aux;
-    p2.dato = (dato *)malloc(sizeof(dato)*aux);
-    for (int i = 0; i < aux; i++)
+    for (int i = 0; i < x[0].aux; i++)
     {
-        p2.dato[i] = pdato[i];
+        fprintf(OUT_FILE, "%s %s %d\n", x[0].punterodato[i].nombre, x[0].punterodato[i].ocupacion, x[0].punterodato[i].edad);
     }
-    
-    pthread_create(&hilo1,NULL,(void *)InvertirOrden,&p1);
-    printf("Hilo 1 Creado \n");
-    pthread_create(&hilo2, NULL, (void *)InvertirOrden, &p2);
-    printf("Hilo 2 Creado \n");
-    pthread_join(hilo1,NULL);
-    pthread_join(hilo2,NULL);
-    
-    on_file1 = fopen(argv[2],"r");
-    if (on_file1 == NULL)
+    fclose(OUT_FILE);
+}
+int main(int argc, char const *argv[])
+{
+    int nrolineas = 0, edad1;
+    char nombre1[20], ocupacion1[20];
+
+    dato *veclineas;
+    dato *veclineas2;
+
+    FILE *IN_FILE;
+    FILE *IN_FILE2;
+    FILE *IN_FILE3;
+    IN_FILE = fopen(argv[1], "r");
+    if (IN_FILE == NULL)
     {
         printf("Se ha producido un error al abrir el archivo");
         exit(8);
     }
-    printf("Hilo 1: \n");
-    for (int i = 0; i < aux; i++)
+    while (fscanf(IN_FILE, "%s %s %d", nombre1, ocupacion1, &edad1) == 3)
     {
-        fscanf(on_file1, "%s %s %d", nombre1,ocupacion1,&edad1);
-        printf("%s %s %d \n",nombre1,ocupacion1,edad1);
+        nrolineas++;
     }
-    on_file2 = fopen(argv[3], "r");
-    printf("Salida del hilo 2\n");
-    for (int i = 0; i < aux; i++)
+    veclineas = (dato *)malloc(sizeof(dato) * nrolineas);
+    veclineas2 = (dato *)malloc(sizeof(dato) * nrolineas);
+    rewind(IN_FILE);
+    for (int i = 0; i < nrolineas; i++)
     {
-        fscanf(on_file2, "%s %s %d", nombre1, ocupacion1, &edad1);
+        fscanf(IN_FILE, "%s %s %d ", nombre1, ocupacion1, &edad1);
+        strcpy(veclineas[i].nombre, nombre1);
+        strcpy(veclineas[i].ocupacion, ocupacion1);
+        veclineas[i].edad = edad1;
+
+        strcpy(veclineas2[i].nombre, nombre1);
+        strcpy(veclineas2[i].ocupacion, ocupacion1);
+        veclineas2[i].edad = edad1;
+    }
+    struct parametro hilo1param;
+    struct parametro hilo2param;
+    hilo1param.punterodato = veclineas;
+    hilo1param.aux = nrolineas;
+    strcpy(hilo1param.salida, argv[2]);
+    hilo2param.punterodato = veclineas2;
+    hilo2param.aux = nrolineas;
+    strcpy(hilo2param.salida, argv[3]);
+
+    pthread_t hilos_id1;
+    pthread_t hilos_id2;
+    pthread_create(&hilos_id1, NULL, (void *)inverso, &hilo1param);
+    pthread_create(&hilos_id2, NULL, (void *)orden, &hilo2param);
+    pthread_join(hilos_id1, NULL);
+    pthread_join(hilos_id2, NULL);
+
+    IN_FILE2 = fopen(argv[2], "r");
+    if (IN_FILE2 == NULL)
+    {
+        printf("Se ha producido un error al abrir el archivo");
+        exit(8);
+    }
+    nrolineas = 0;
+    while (fscanf(IN_FILE2, "%s %s %d", nombre1, ocupacion1, &edad1) == 3){
+        nrolineas++;
+    }
+    rewind(IN_FILE2);
+    printf("----------HILO 1----------- \n");
+    for(int i=0;i<nrolineas;i++){
+        fscanf(IN_FILE2, "%s %s %d \n", nombre1, ocupacion1, &edad1);
         printf("%s %s %d\n", nombre1, ocupacion1, edad1);
     }
-    fclose(in_file);
-    fclose(on_file1);
-    fclose(on_file2);
-    free(pdato);
-    free(p2.dato);
-    return 0;
+    IN_FILE3 = fopen(argv[3], "r");
+    if (IN_FILE3 == NULL)
+    {
+        printf("Se ha producido un error al abrir el archivo");
+        exit(8);
+    }
+    printf("----------HILO 2-----------\n");
+    for (int i = 0; i < nrolineas; i++)
+    {
+        fscanf(IN_FILE3, "%s %s %d \n", nombre1, ocupacion1, &edad1);
+        printf("%s %s %d\n", nombre1, ocupacion1, edad1);
+    }
+        return 0;
 }
-
-    
