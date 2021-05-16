@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     strcat(Copia, "/");
     while ((dep = readdir(streamp)) != NULL)
     {
-        printf("Archivo encontrado: %s \n, Tipo: %d\n", dep->d_name, dep->d_type);
+        printf("Archivo encontrado: %s \n, Tipo: %d\n \n", dep->d_name, dep->d_type);
         if (dep->d_type == 4)
         {
             strcat(Copia, dep->d_name);
