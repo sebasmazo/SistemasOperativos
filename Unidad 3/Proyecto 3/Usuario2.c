@@ -168,17 +168,18 @@ void *msgleer()
         }
         fprintf(stdout, "Pelao poco serio dice: %s", msgbuf);
 
-        //UNMAPEAMOS
-        if (munmap(msgbuf, SIZE) < 0)
-        {
-            perror("Error en el unmapeo de lectura USER1");
-            exit(EXIT_SUCCESS);
-        }
+        
         if (sem_post(semf3) == -1)
         {
             perror("Error en sempost lectura SEM4 user1");
             exit(EXIT_SUCCESS);
         }
+    }
+    //UNMAPEAMOS
+    if (munmap(msgbuf, SIZE) < 0)
+    {
+        perror("Error en el unmapeo de lectura USER1");
+        exit(EXIT_SUCCESS);
     }
     return 0;
 }
