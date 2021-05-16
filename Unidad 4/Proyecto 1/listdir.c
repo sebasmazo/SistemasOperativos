@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 {
     DIR *streamp;
     DIR *streampaux;
-    char Copia[30];
+    char Copia[60];
     struct dirent *dep;
     struct dirent *depaux;
     if (argc != 2)
